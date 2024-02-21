@@ -22,7 +22,8 @@ public class NotepadInfoDesign extends JDialog implements ActionListener {
 		addJTextArea();
 		addJButton();
 		
-		setBounds(nd.getX()+120, nd.getY()+120, 250, 140);
+		setBounds(nd.getX()+120, nd.getY()+120, 250, 160);
+		setResizable(false);
 		setVisible(true);
 	}	// NotepadInfoDesign
 	

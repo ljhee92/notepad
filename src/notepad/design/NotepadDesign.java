@@ -16,6 +16,7 @@ public class NotepadDesign extends JFrame {
 	private JTextArea jtaNote;
 	
 	public NotepadDesign() {
+		super("메모장");
 		addMenuBar();
 		addTextArea();
 		addListener();
