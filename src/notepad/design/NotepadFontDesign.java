@@ -4,9 +4,11 @@ import javax.swing.DefaultListModel;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 
 import notepad.font.Font;
+import notepad.font.FontStyle;
 
 @SuppressWarnings("serial")
 public class NotepadFontDesign extends JDialog {
@@ -66,14 +68,39 @@ public class NotepadFontDesign extends JDialog {
 	private void addList() {
 		DefaultListModel<String> dlmFont = new DefaultListModel<String>();
 		JList<String> jlFont = new JList<String>(dlmFont);
-//		Font font = Font.GOTHIC;
+		JScrollPane jspFont = new JScrollPane(jlFont);
+		
+		DefaultListModel<String> dlmFontStyle = new DefaultListModel<String>();
+		JList<String> jlFontStyle = new JList<String>(dlmFontStyle);
+		JScrollPane jspFontStyle = new JScrollPane(jlFontStyle);
+		
+		DefaultListModel<Integer> dlmFontSize = new DefaultListModel<Integer>();
+		JList<Integer> jlFontSize = new JList<Integer>(dlmFontSize);
+		JScrollPane jspFontSize = new JScrollPane(jlFontSize);
+
 		for(Font font : Font.GOTHIC.values()) {
 			dlmFont.addElement(font.getName());
-		}
+		}	// end for
+
+		for(FontStyle fontStyle : FontStyle.PLAIN.values()) {
+			dlmFontStyle.addElement(fontStyle.getName());
+		}	// end for
 		
-		jlFont.setBounds(10, 80, 150, 100);
+		for(int i = 8; i < 12; i++) {
+			dlmFontSize.addElement(i);
+		}	// end for
 		
-		add(jlFont);
+		for(int i = 12; i < 81; i+=2) {
+			dlmFontSize.addElement(i);
+		}	// end for
+		
+		jspFont.setBounds(10, 80, 150, 100);
+		jspFontStyle.setBounds(180, 80, 140, 100);
+		jspFontSize.setBounds(340, 80, 80, 100);
+		
+		add(jspFont);
+		add(jspFontStyle);
+		add(jspFontSize);
 	}	// addList
 
 }	// class
