@@ -9,7 +9,7 @@ public enum Font {
 	GUNGSEO("궁서체"),
 	CONSOLAS("Consolas"),
 	GULLIM("새굴림"),
-	MALGEUN_GOTHIC("맑은고딕");
+	MALGEUN_GOTHIC("맑은 고딕");
 	
 	private String name;
 
