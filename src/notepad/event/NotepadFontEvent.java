@@ -10,10 +10,10 @@ import java.awt.event.WindowAdapter;
 import javax.swing.DefaultListModel;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 import notepad.design.NotepadFontDesign;
-import notepad.font.FontStyle;
 import notepad.font.FontStyleStoI;
 
 public class NotepadFontEvent extends WindowAdapter implements ActionListener, MouseListener {
@@ -25,7 +25,10 @@ public class NotepadFontEvent extends WindowAdapter implements ActionListener, M
 	private JList<String> jlFont, jlFontStyle;
 	private JList<Integer> jlFontSize;
 	private JLabel jlSample;
+	private JTextArea jtaNote;
 	private Font font;
+	int selectedInd;
+	FontStyleStoI fontStoI;
 	
 	public NotepadFontEvent(NotepadFontDesign nfd) {
 		this.nfd = nfd;
@@ -42,45 +45,82 @@ public class NotepadFontEvent extends WindowAdapter implements ActionListener, M
 		dlmFontStyle = nfd.getDlmFontStyle();
 		dlmFontSize = nfd.getDlmFontSize();
 		
+		jtaNote = nfd.getJtaNote();
 		jlSample = nfd.getJlSample();
+		
+		fontStoI = new FontStyleStoI();
 	}	// NotepadFontEvent
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if(e.getSource() == nfd.getJbtnConfrim()) {
-			System.out.println("확인 버튼 클릭 테스트");
+			setJtaFont();
 		}	// end if
 		
 		if(e.getSource() == nfd.getJbtnCancel()) {
-			nfd.dispose();
+			quitFontDialog();
 		}	// end if
 	}	// actionPerformed
+	
+	/**
+	 * 확인 버튼이 눌렸을 때 Notepad의 jta에 폰트를 설정하고 다이얼로그를 닫는 일
+	 */
+	private void setJtaFont() {
+		jtaNote.setFont(font);
+		quitFontDialog();
+	}	// setJtaFont
+	
+	private void quitFontDialog() {
+		nfd.dispose();
+	}	// quitFontDialog
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		if(e.getSource() == jlFont) {
-			jtfFont.setText(dlmFont.getElementAt(jlFont.getSelectedIndex()));
-			setSample();
+			selectedInd = jlFont.getSelectedIndex();
+			jtfFont.setText(dlmFont.getElementAt(selectedInd));
+			setJlSampleFont(selectedInd);
 		}	// end if
 		
 		if(e.getSource() == jlFontStyle) {
-			jtfFontStyle.setText(dlmFontStyle.getElementAt(jlFontStyle.getSelectedIndex()));
-			setSample();
+			selectedInd = jlFontStyle.getSelectedIndex();
+			jtfFontStyle.setText(dlmFontStyle.getElementAt(selectedInd));
+			setJlSampleFontStyle(selectedInd);
 		}	// end if
 		
 		if(e.getSource() == jlFontSize) {
-			jtfFontSize.setText(dlmFontSize.getElementAt(jlFontSize.getSelectedIndex()).toString());
-			setSample();
+			selectedInd = jlFontSize.getSelectedIndex();
+			jtfFontSize.setText(dlmFontSize.getElementAt(selectedInd).toString());
+			setJlSampleFontSize(selectedInd);
 		}	// end if
 	}	// mouseClicked
 	
-	private void setSample() {
-		jlSample.setFont(new Font(dlmFont.getElementAt(jlFont.getSelectedIndex()), 0, 15));
-		for(FontStyle fontS : FontStyle.values()) {
-			System.out.println(fontS);
-		}
-		
-	}	// setSample
+	/**
+	 * 리스트의 폰트명이 눌렸을 때 sample 라벨의 폰트를 설정하는 일
+	 * @param selectedInd 눌린 폰트명의 인덱스
+	 */
+	private void setJlSampleFont(int selectedInd) {
+		font = new Font(dlmFont.getElementAt(selectedInd), jlSample.getFont().getStyle(), jlSample.getFont().getSize());
+		jlSample.setFont(font);
+	}	// set Font
+	
+	/**
+	 * 리스트의 폰트 스타일이 눌렸을 때 sample 라벨의 폰트 스타일을 설정하는 일
+	 * @param selectedInd 눌린 폰트 스타일의 인덱스
+	 */
+	private void setJlSampleFontStyle(int selectedInd) {
+		font = new Font(jlSample.getFont().getName(), fontStoI.getfStyleMap().get(dlmFontStyle.getElementAt(selectedInd)), jlSample.getFont().getSize());
+		jlSample.setFont(font);
+	}	// setFontStyle
+	
+	/**
+	 * 리스트의 폰트 사이즈가 눌렸을 때 sample 라벨의 폰트 사이즈를 설정하는 일
+	 * @param selectedInd 눌린 폰트 사이즈의 인덱스
+	 */
+	private void setJlSampleFontSize(int selectedInd) {
+		font = new Font(jlSample.getFont().getName(), jlSample.getFont().getStyle(), dlmFontSize.getElementAt(selectedInd));
+		jlSample.setFont(font);
+	}	// setFontSize
 
 	@Override
 	public void mousePressed(MouseEvent e) {

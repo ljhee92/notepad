@@ -5,7 +5,7 @@ import java.util.Map;
 
 public class FontStyleItoS {
 	
-	Map<Integer, String> fStyleMap;
+	public static Map<Integer, String> fStyleMap;
 	
 	public FontStyleItoS() {
 		fStyleMap = new HashMap<Integer, String>();

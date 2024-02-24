@@ -6,6 +6,7 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.border.TitledBorder;
 
@@ -23,9 +24,11 @@ public class NotepadFontDesign extends JDialog {
 	private JList<Integer> jlFontSize;
 	private JButton jbtnConfrim, jbtnCancel;
 	private JLabel jlSample;
+	private JTextArea jtaNote;
 	
 	public NotepadFontDesign(NotepadDesign nd) {
 		super(nd, "글꼴", true);
+		jtaNote = nd.getJtaNote();
 		setLayout(null);
 		
 		addLabel();
@@ -196,6 +199,10 @@ public class NotepadFontDesign extends JDialog {
 
 	public JLabel getJlSample() {
 		return jlSample;
+	}
+
+	public JTextArea getJtaNote() {
+		return jtaNote;
 	}
 
 }	// class
