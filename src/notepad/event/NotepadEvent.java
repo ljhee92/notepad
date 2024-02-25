@@ -42,7 +42,12 @@ public class NotepadEvent extends WindowAdapter implements ActionListener {
 		
 		// 저장 클릭
 		if(e.getSource() == nd.getJmiSaveNote()) {
-			saveFile();
+			chkFile();
+		}	// end if
+		
+		// 새이름 저장 클릭
+		if(e.getSource() == nd.getJmiSaveNewNote()) {
+			saveNewFile();
 		}	// end if
 		
 		// 종료 클릭
@@ -114,10 +119,21 @@ public class NotepadEvent extends WindowAdapter implements ActionListener {
 	}	// readFile
 	
 	/**
+	 * 한 번이라도 열린 파일인지, 열리지 않은 파일인지 확인하는 일
+	 */
+	private void chkFile() {
+		if(nd.getTitle().equals("메모장-새글") || nd.getTitle().equals("메모장")) {
+			saveNewFile();
+		} else {
+			saveExistFile();
+		}	// end else
+	}	// chkContents
+	
+	/**
 	 * 파일을 저장하는 일
 	 */
-	private void saveFile() {
-		fdSave = new FileDialog(nd, "파일 저장", FileDialog.SAVE);
+	private void saveNewFile() {
+		fdSave = new FileDialog(nd, "다른 이름으로 저장", FileDialog.SAVE);
 		fdSave.setVisible(true);
 		fdSaveDirectory = fdSave.getDirectory();
 		fdSaveFile = fdSave.getFile();
@@ -147,6 +163,21 @@ public class NotepadEvent extends WindowAdapter implements ActionListener {
 			e.printStackTrace();
 		}	// end catch
 	}	// writeFile
+	
+	/**
+	 * 기존의 파일에 덮어쓰기 저장하는 일
+	 */
+	private void saveExistFile() {
+		String fileTitle = nd.getTitle();
+		File existFile = new File(fileTitle);
+		
+		try(FileWriter fw = new FileWriter(existFile)) {
+			fw.write(nd.getJtaNote().getText());
+			fw.flush();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}	// end catch
+	}	// saveExistFile
 
 	/**
 	 * 윈도우 창 종료 시 메모장 프로그램을 종료하는 method를 호출하는 일

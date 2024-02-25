@@ -12,7 +12,7 @@ import notepad.event.NotepadEvent;
 @SuppressWarnings("serial")
 public class NotepadDesign extends JFrame {
 	
-	private JMenuItem jmiNewNote, jmiOpenNote, jmiSaveNote, jmiQuitNote, jmiLineWrap, jmiFont, jmiNoteInfo;
+	private JMenuItem jmiNewNote, jmiOpenNote, jmiSaveNote, jmiSaveNewNote, jmiQuitNote, jmiLineWrap, jmiFont, jmiNoteInfo;
 	private JTextArea jtaNote;
 	
 	public NotepadDesign() {
@@ -42,6 +42,7 @@ public class NotepadDesign extends JFrame {
 		jmiNewNote = new JMenuItem("새글");
 		jmiOpenNote = new JMenuItem("열기");
 		jmiSaveNote = new JMenuItem("저장");
+		jmiSaveNewNote = new JMenuItem("새이름 저장");
 		jmiQuitNote = new JMenuItem("종료");
 		jmiLineWrap = new JMenuItem("줄바꿈");
 		jmiFont = new JMenuItem("글꼴");
@@ -51,6 +52,7 @@ public class NotepadDesign extends JFrame {
 		jmFile.addSeparator();
 		jmFile.add(jmiOpenNote);
 		jmFile.add(jmiSaveNote);
+		jmFile.add(jmiSaveNewNote);
 		jmFile.addSeparator();
 		jmFile.add(jmiQuitNote);
 		jmEdit.add(jmiLineWrap);
@@ -83,6 +85,7 @@ public class NotepadDesign extends JFrame {
 		jmiNewNote.addActionListener(ne);
 		jmiOpenNote.addActionListener(ne);
 		jmiSaveNote.addActionListener(ne);
+		jmiSaveNewNote.addActionListener(ne);
 		jmiQuitNote.addActionListener(ne);
 		jmiLineWrap.addActionListener(ne);
 		jmiFont.addActionListener(ne);
@@ -99,6 +102,10 @@ public class NotepadDesign extends JFrame {
 
 	public JMenuItem getJmiSaveNote() {
 		return jmiSaveNote;
+	}
+
+	public JMenuItem getJmiSaveNewNote() {
+		return jmiSaveNewNote;
 	}
 
 	public JMenuItem getJmiQuitNote() {
