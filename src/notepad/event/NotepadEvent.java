@@ -11,6 +11,8 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 
+import javax.swing.JOptionPane;
+
 import notepad.design.NotepadDesign;
 import notepad.design.NotepadFontDesign;
 import notepad.design.NotepadInfoDesign;
@@ -37,12 +39,12 @@ public class NotepadEvent extends WindowAdapter implements ActionListener {
 		
 		// 열기 클릭 
 		if(e.getSource() == nd.getJmiOpenNote()) {
-			openFile();
+			chkFileOpen();
 		}	// end if
 		
 		// 저장 클릭
 		if(e.getSource() == nd.getJmiSaveNote()) {
-			chkFile();
+			chkFileSave();
 		}	// end if
 		
 		// 새이름 저장 클릭
@@ -71,6 +73,51 @@ public class NotepadEvent extends WindowAdapter implements ActionListener {
 		}	// end if
 		
 	}	// actionPerformed
+	
+	
+	/**
+	 * 한 번이라도 열린 파일인지, 열리지 않은 파일인지 확인하는 일
+	 */
+	private void chkFileOpen() {
+		// TextArea에 내용이 없는 상태(한 번이라도 열린 적이 없는 상태)
+		if(nd.getJtaNote().getText().isEmpty()) {
+			openFile();
+			return;
+		}	// end if
+		
+		// TextArea에 내용이 있는 상태
+		if(!nd.getJtaNote().getText().isEmpty() && (nd.getTitle().equals("메모장-새글") || nd.getTitle().equals("메모장"))) {
+			// 한 번이라도 열린 적이 없는 상태
+			chkSave();
+		} else {
+			// 열린 적이 있는 상태
+			chkChangeContents();
+		}	// end else
+	}	// chkFileSave
+	
+	/**
+	 * 이전에 열기한 내용과 현재의 내용에 변경이 있는지 확인하는 일
+	 */
+	private void chkChangeContents() {
+		int chkChange = JOptionPane.showConfirmDialog(nd, "변경된 내용이 있나요?");
+		switch(chkChange) {
+		case JOptionPane.CANCEL_OPTION : break;
+		case JOptionPane.OK_OPTION : chkSave(); break;
+		case JOptionPane.NO_OPTION : openFile();
+		}	// end case
+	}	// chkChangeContents
+	
+	/**
+	 * 저장 여부를 확인하는 일
+	 */
+	private void chkSave() {
+		int chkSave = JOptionPane.showConfirmDialog(nd, "저장하시겠습니까?");
+		switch(chkSave) {
+		case JOptionPane.CANCEL_OPTION : break;
+		case JOptionPane.OK_OPTION : saveNewFile();
+		case JOptionPane.NO_OPTION : openFile();
+		}	// end case
+	}	// chkSave
 	
 	/**
 	 * 파일을 여는 일
@@ -119,15 +166,15 @@ public class NotepadEvent extends WindowAdapter implements ActionListener {
 	}	// readFile
 	
 	/**
-	 * 한 번이라도 열린 파일인지, 열리지 않은 파일인지 확인하는 일
+	 * 저장을 위해 한 번이라도 열린 파일인지, 열리지 않은 파일인지 확인하는 일
 	 */
-	private void chkFile() {
+	private void chkFileSave() {
 		if(nd.getTitle().equals("메모장-새글") || nd.getTitle().equals("메모장")) {
 			saveNewFile();
 		} else {
 			saveExistFile();
 		}	// end else
-	}	// chkContents
+	}	// chkFileSave
 	
 	/**
 	 * 파일을 저장하는 일
