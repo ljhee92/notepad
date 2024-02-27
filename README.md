@@ -15,7 +15,7 @@ java swing을 활용하여 프로그램을 구현했습니다.
 2. 메모장 design
 	- 메뉴바: 파일, 편집, 서식, 도움말
 	- 메뉴아이템: 새글, 열기, 저장, 새이름 저장, 종료 / 줄바꿈 / 글꼴 / 메모장 정보
-	- TextArea
+	- TextArea: bin 폴더에 저장된 Font 객체 정보를 불러들여와 적용
 	- Listener
 
 3. 메모장 event
@@ -46,7 +46,7 @@ java swing을 활용하여 프로그램을 구현했습니다.
 	
 6. 글꼴 event
 	- 리스트 클릭 시 TextField와 보기에 함께 적용
-	- 확인 버튼 클릭 시 메모장에 적용
+	- 확인 버튼 클릭 시 메모장에 적용 및 Font 객체를 bin 폴더로 저장
 
 7. 메모장 정보 design (+event 포함)
 	- TextArea(수정 불가)
