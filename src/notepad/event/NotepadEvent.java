@@ -21,7 +21,7 @@ public class NotepadEvent extends WindowAdapter implements ActionListener {
 	
 	private NotepadDesign nd;
 	private FileDialog fdOpen, fdSave;
-	private String fdOpenDirectory, fdOpenFile, fdSaveDirectory, fdSaveFile;
+	private String fdOpenDirectory, fdOpenFile, fdSaveDirectory, fdSaveFile, readData;
 	
 	public NotepadEvent(NotepadDesign nd) {
 		this.nd = nd;
@@ -34,7 +34,7 @@ public class NotepadEvent extends WindowAdapter implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		// 새글 클릭
 		if(e.getSource() == nd.getJmiNewNote()) {
-			nd.getJtaNote().setText("");
+			chkFileNew();
 		}	// end if
 		
 		// 열기 클릭 
@@ -74,9 +74,39 @@ public class NotepadEvent extends WindowAdapter implements ActionListener {
 		
 	}	// actionPerformed
 	
+	/**
+	 * 새 글 수행을 위해 한 번이라도 열린 파일인지, 열리지 않은 파일인지 확인하는 일
+	 */
+	private void chkFileNew() {
+		// TextArea에 내용이 없는 상태
+		if(nd.getJtaNote().getText().isEmpty()) {
+			nd.setTitle("메모장-새글");
+			return;
+		}	// end if
+		
+		// TextArea에 내용이 있는 상태
+		if(!nd.getJtaNote().getText().isEmpty() && (nd.getTitle().equals("메모장-새글") || nd.getTitle().equals("메모장"))) {
+			// 한 번이라도 열린 적이 없는 상태
+			chkNewSave();
+		} else {
+			// 열린 적이 있는 상태
+			chkChangeContents();
+		}	// end else
+		nd.getJtaNote().setText("");
+		nd.setTitle("메모장-새글");
+	}	// chkFileNew
 	
 	/**
-	 * 한 번이라도 열린 파일인지, 열리지 않은 파일인지 확인하는 일
+	 * 열기한 파일의 내용과 현재 내용이 변경되었는지 판단하는 일
+	 */
+	private void chkChangeContents() {
+		if(!nd.getJtaNote().getText().equals(readData)) {
+			chkExistSave();
+		}	// end if
+	}	// chkChangeContents
+	
+	/**
+	 * 파일 열기 수행을 위해 한 번이라도 열린 파일인지, 열리지 않은 파일인지 확인하는 일
 	 */
 	private void chkFileOpen() {
 		// TextArea에 내용이 없는 상태(한 번이라도 열린 적이 없는 상태)
@@ -88,34 +118,47 @@ public class NotepadEvent extends WindowAdapter implements ActionListener {
 		// TextArea에 내용이 있는 상태
 		if(!nd.getJtaNote().getText().isEmpty() && (nd.getTitle().equals("메모장-새글") || nd.getTitle().equals("메모장"))) {
 			// 한 번이라도 열린 적이 없는 상태
-			chkSave();
+			chkNewSave();
 		} else {
 			// 열린 적이 있는 상태
-			chkChangeContents();
+			askChangeContents();
 		}	// end else
+		openFile();
 	}	// chkFileSave
 	
 	/**
-	 * 이전에 열기한 내용과 현재의 내용에 변경이 있는지 확인하는 일
+	 * 이전에 열기한 내용과 현재의 내용에 변경이 있는지 묻는 일
 	 */
-	private void chkChangeContents() {
-		int chkChange = JOptionPane.showConfirmDialog(nd, "변경된 내용이 있나요?");
-		switch(chkChange) {
+	private void askChangeContents() {
+		int askChange = JOptionPane.showConfirmDialog(nd, "변경된 내용이 있나요?");
+		switch(askChange) {
 		case JOptionPane.CANCEL_OPTION : break;
-		case JOptionPane.OK_OPTION : chkSave(); break;
-		case JOptionPane.NO_OPTION : openFile();
+		case JOptionPane.OK_OPTION : chkExistSave(); break;
+		case JOptionPane.NO_OPTION : 
 		}	// end case
 	}	// chkChangeContents
 	
 	/**
-	 * 저장 여부를 확인하는 일
+	 * 새로운 파일로의 저장 여부를 확인하는 일
 	 */
-	private void chkSave() {
-		int chkSave = JOptionPane.showConfirmDialog(nd, "저장하시겠습니까?");
-		switch(chkSave) {
+	private void chkNewSave() {
+		int chkNewSave = JOptionPane.showConfirmDialog(nd, "저장하시겠습니까?");
+		switch(chkNewSave) {
 		case JOptionPane.CANCEL_OPTION : break;
 		case JOptionPane.OK_OPTION : saveNewFile();
-		case JOptionPane.NO_OPTION : openFile();
+		case JOptionPane.NO_OPTION : 
+		}	// end case
+	}	// chkSave
+	
+	/**
+	 * 기존 파일로의 저장 여부를 확인하는 일
+	 */
+	private void chkExistSave() {
+		int chkExistSave = JOptionPane.showConfirmDialog(nd, "저장하시겠습니까?");
+		switch(chkExistSave) {
+		case JOptionPane.CANCEL_OPTION : break;
+		case JOptionPane.OK_OPTION : saveExistFile();
+		case JOptionPane.NO_OPTION : 
 		}	// end case
 	}	// chkSave
 	
@@ -148,7 +191,7 @@ public class NotepadEvent extends WindowAdapter implements ActionListener {
 		File readFile = new File(fdOpenDirectory + fdOpenFile);
 		
 		BufferedReader br = null;
-		String readData = "";
+		readData = "";
 		StringBuilder sb = new StringBuilder();
 		try {
 			br = new BufferedReader(new FileReader(readFile));

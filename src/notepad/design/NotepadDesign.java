@@ -1,5 +1,12 @@
 package notepad.design;
 
+import java.awt.Font;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectInputStream;
+
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -14,6 +21,8 @@ public class NotepadDesign extends JFrame {
 	
 	private JMenuItem jmiNewNote, jmiOpenNote, jmiSaveNote, jmiSaveNewNote, jmiQuitNote, jmiLineWrap, jmiFont, jmiNoteInfo;
 	private JTextArea jtaNote;
+	private File fontFile;
+	private Font font;
 	
 	public NotepadDesign() {
 		super("메모장");
@@ -72,8 +81,48 @@ public class NotepadDesign extends JFrame {
 	private void addTextArea() {
 		jtaNote = new JTextArea();
 		JScrollPane jsp = new JScrollPane(jtaNote);
+		setDefaultFont();
 		add(jsp);
 	}	// addTextArea
+	
+	/**
+	 * TextArea의 기본 폰트를 설정하는 일
+	 */
+	private void setDefaultFont() {
+		fontFile = new File("/Users/juhee/eclipse-workspace/notepad/bin/font.txt");
+		if(fontFile.exists()) {
+			try {
+				font = bringFont();
+			} catch (ClassNotFoundException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}	// end catch
+			jtaNote.setFont(font);
+		} else {
+			jtaNote.setFont(new Font("맑은 고딕", Font.PLAIN, 14));
+		}
+	}	// setDefaultFont
+	
+	/**
+	 * bin 폴더에 저장된 폰트 객체를 가져오는 일
+	 * @return 폰트 객체
+	 * @throws IOException 
+	 * @throws ClassNotFoundException 
+	 */
+	private Font bringFont() throws IOException, ClassNotFoundException {
+		Font font = null;
+		ObjectInput ois = null;
+		try {
+			ois = new ObjectInputStream(new FileInputStream("/Users/juhee/eclipse-workspace/notepad/bin/font.txt"));
+			font = (Font)ois.readObject();
+		} finally {
+			if(ois != null) {
+				ois.close();
+			}	// end if
+		}	// end finally
+		return font;
+	}	// bringFont
 	
 	/**
 	 * 메뉴아이템에 리스너를 추가하는 일

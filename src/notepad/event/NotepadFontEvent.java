@@ -6,6 +6,12 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.NotSerializableException;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JLabel;
@@ -14,10 +20,12 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 import notepad.design.NotepadFontDesign;
+import notepad.font.FontStyleItoS;
 import notepad.font.FontStyleStoI;
 
-public class NotepadFontEvent extends WindowAdapter implements ActionListener, MouseListener {
+public class NotepadFontEvent extends WindowAdapter implements ActionListener, MouseListener, Serializable {
 	
+	private static final long serialVersionUID = -1626206507790060971L;
 	private NotepadFontDesign nfd;
 	private JTextField jtfFont, jtfFontStyle, jtfFontSize;
 	private DefaultListModel<String> dlmFont, dlmFontStyle;
@@ -29,6 +37,7 @@ public class NotepadFontEvent extends WindowAdapter implements ActionListener, M
 	private Font font;
 	int selectedInd;
 	FontStyleStoI fontStoI;
+	FontStyleItoS fontItoS;
 	
 	public NotepadFontEvent(NotepadFontDesign nfd) {
 		this.nfd = nfd;
@@ -49,14 +58,17 @@ public class NotepadFontEvent extends WindowAdapter implements ActionListener, M
 		jlSample = nfd.getJlSample();
 		
 		fontStoI = new FontStyleStoI();
+		fontItoS = new FontStyleItoS();
 	}	// NotepadFontEvent
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
+		// 확인 버튼 클릭
 		if(e.getSource() == nfd.getJbtnConfrim()) {
 			setJtaFont();
 		}	// end if
 		
+		// 취소 버튼 클릭
 		if(e.getSource() == nfd.getJbtnCancel()) {
 			quitFontDialog();
 		}	// end if
@@ -67,9 +79,38 @@ public class NotepadFontEvent extends WindowAdapter implements ActionListener, M
 	 */
 	private void setJtaFont() {
 		jtaNote.setFont(font);
-		quitFontDialog();
+		try {
+			saveFont();
+		} catch (NotSerializableException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}	// end catch
+ 			quitFontDialog();
 	}	// setJtaFont
 	
+	/**
+	 * 설정한 폰트 객체를 bin 폴더 내부에 저장하는 일
+	 * @throws IOException 
+	 * @throws NotSerializableException 
+	 */
+	private void saveFont() throws NotSerializableException, IOException {
+		ObjectOutputStream oos = null;
+		
+		try {
+			oos = new ObjectOutputStream(new FileOutputStream("/Users/juhee/eclipse-workspace/notepad/bin/font.txt"));
+			oos.writeObject(font);
+			oos.flush();
+		} finally {
+			if(oos != null) {
+				oos.close();
+			}	// end finally
+		}	// end catch
+	}	// saveFont
+	
+	/**
+	 * 다이얼로그를 닫는 일
+	 */
 	private void quitFontDialog() {
 		nfd.dispose();
 	}	// quitFontDialog
@@ -121,6 +162,23 @@ public class NotepadFontEvent extends WindowAdapter implements ActionListener, M
 		font = new Font(jlSample.getFont().getName(), jlSample.getFont().getStyle(), dlmFontSize.getElementAt(selectedInd));
 		jlSample.setFont(font);
 	}	// setFontSize
+
+	/**
+	 * 폰트 다이얼로그가 열렸을 때 TextArea에 설정되어있던 글꼴 정보가 TextField, sample 라벨에 적용되는 일
+	 */
+	@Override
+	public void windowOpened(WindowEvent e) {
+		jtfFont.setText(jtaNote.getFont().getName());
+		jtfFontStyle.setText(fontItoS.getfStyleMap().get(jtaNote.getFont().getStyle()));
+		jtfFontSize.setText(Integer.toString(jtaNote.getFont().getSize()));
+		
+		jlSample.setFont(jtaNote.getFont());
+	}	// windowOpened
+
+	@Override
+	public void windowClosing(WindowEvent e) {
+		quitFontDialog();
+	}	// windowClosing
 
 	@Override
 	public void mousePressed(MouseEvent e) {
